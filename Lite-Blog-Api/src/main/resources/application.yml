@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    include:
+      - web
+      - db
+      - part
+      - log
