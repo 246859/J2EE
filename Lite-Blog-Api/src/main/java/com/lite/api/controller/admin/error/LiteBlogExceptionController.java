@@ -37,8 +37,9 @@ public class LiteBlogExceptionController implements ErrorController {
         Object exceptionTrace = request.getAttribute(EXCEPTION_MESSAGE);
 
         //如果没有错误信息就替换异常信息
-        if (Strings.isBlank(msg) && !Objects.isNull(exceptionTrace))
+        if (Strings.isBlank(msg) && !Objects.isNull(exceptionTrace)){
             msg = exceptionTrace.toString();
+        }
 
         //如果还不行就取状态码的默认信息
         if (Strings.isBlank(msg)) {
