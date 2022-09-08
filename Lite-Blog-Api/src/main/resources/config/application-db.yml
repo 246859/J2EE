@@ -3,7 +3,7 @@ spring:
     #数据库驱动
     driver-class-name: com.mysql.cj.jdbc.Driver
     #数据库连接URL
-    url: jdbc:mysql://localhost:3306/j2ee?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong&allowMultiQueries=true
+    url: jdbc:mysql://localhost:3306/mybatis_test?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Hongkong&allowMultiQueries=true
     #数据库用户名
     username: root
     #数据库密码
@@ -43,7 +43,7 @@ spring:
         #最小空闲连接
         min-idle: 5
         #连接等待时间
-        max-wait: 12000
+        max-wait: 30000
 
 #mp配置
 mybatis-plus:

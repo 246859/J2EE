@@ -26,4 +26,8 @@ public class Entity {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedTime;
 
+    public Entity(){
+        this.createdTime = LocalDateTime.now();
+        this.updatedTime = LocalDateTime.now();
+    }
 }

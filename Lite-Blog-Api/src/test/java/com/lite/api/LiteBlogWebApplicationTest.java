@@ -3,11 +3,13 @@ package com.lite.api;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lite.auth.dao.AuthMapper;
 import com.lite.auth.entity.User;
+import com.lite.business.service.user.Impl.UserServiceImpl;
 import com.lite.common.serializer.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
 
 @Slf4j
 @SpringBootTest
@@ -28,8 +30,16 @@ public class LiteBlogWebApplicationTest {
     void applicationTest() {
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getMail, "2633565580@qq.com");
-        redisCache.setCacheObject("redis",authMapper.selectList(queryWrapper).toString());
+        redisCache.setCacheObject("redis", authMapper.selectList(queryWrapper).toString());
         log.info(redisCache.getCacheObject("redis").toString());
     }
 
+
+
+    @Autowired
+    UserServiceImpl userService;
+    @Test
+    public void mybatisTest(){
+        log.info(userService.getById(1).toString());
+    }
 }

@@ -3,10 +3,8 @@ package com.lite.system.core.iml;
 import com.lite.common.i18n.SystemMessages;
 import com.lite.common.serializer.RedisCache;
 import com.lite.system.config.SystemConfig;
-import com.lite.system.entity.SystemApi;
-import com.lite.system.entity.SystemApiRelation;
-import com.lite.system.entity.SystemController;
-import com.lite.system.entity.SystemEntity;
+import com.lite.system.dao.SystemMapper;
+import com.lite.system.entity.*;
 import com.lite.system.service.SystemApiRelationService;
 import com.lite.system.service.SystemApiService;
 import com.lite.system.service.SystemCtrlService;
@@ -18,9 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -51,12 +47,18 @@ public class DefaultSystemManager extends AbstractSystemManager {
     @Autowired
     SystemConfig systemConfig;
 
+    @Autowired
+    SystemMapper systemMapper;
+
 
     @Override
     public void loadSystemInfo(WebApplicationContext applicationContext) {
 
         //刷新获取容器信息
         refreshContextInfo(applicationContext);
+
+        //初始化数据库
+        iniDataBase();
 
         //处理controller信息
         processSystemControllerInfo();
@@ -66,6 +68,25 @@ public class DefaultSystemManager extends AbstractSystemManager {
 
         processRelationInfo();
     }
+
+    private void iniDataBase() {
+        systemMapper.createPermissionTable(systemConfig.getPermissionTable());
+        systemMapper.insertPermissionData(loadPermissionList(), systemConfig.getPermissionTable());
+        systemMapper.createUserTable(systemConfig.getUserTable());
+        systemMapper.createFileTable(systemConfig.getFileTable());
+        systemMapper.createApiTable(systemConfig.getApiTable());
+        systemMapper.createControllerTable(systemConfig.getControllerTable());
+        systemMapper.createApiCtrlTable(systemConfig.getApiControllerTable());
+    }
+
+    private List<Permission> loadPermissionList() {
+        //拿到枚举类中的枚举值
+        return Arrays.stream(PermissionId.class.getEnumConstants())
+                .map(permissionId -> new Permission(permissionId.val(), permissionId.msg()))
+                .sorted(Comparator.comparing(Permission::getCode))
+                .collect(Collectors.toList());
+    }
+
 
     /**
      * 进行controller信息处理
@@ -260,11 +281,11 @@ public class DefaultSystemManager extends AbstractSystemManager {
         lessList.removeAll(systemRelationList);
 
         //进行数据库操作
-        if (!moreList.isEmpty()){
+        if (!moreList.isEmpty()) {
             relationService.saveBatch(moreList);
         }
 
-        if (!lessList.isEmpty()){
+        if (!lessList.isEmpty()) {
             relationService.removeBatchByIds(lessList);
         }
 
